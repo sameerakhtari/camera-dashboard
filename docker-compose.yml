@@ -1,0 +1,31 @@
+services:
+  dashboard:
+    build: .
+    container_name: camera-dashboard
+    restart: unless-stopped
+
+    ports:
+      - "\${DASHBOARD_PORT:-8085}:8085"
+
+    env_file:
+      - .env
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+    environment:
+      TZ: "\${TZ:-UTC}"
+      PYTHONUNBUFFERED: "1"
+
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8085/health', timeout=3)"
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

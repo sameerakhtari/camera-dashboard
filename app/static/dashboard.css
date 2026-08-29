@@ -1,0 +1,261 @@
+html,
+body {
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #000;
+    color: #fff;
+
+    font-family: Arial, Helvetica, sans-serif;
+
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+
+#topbar {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+    top: 0;
+
+    height: 64px;
+
+    background: #151515;
+
+    border-bottom: 2px solid #333;
+
+    z-index: 10;
+}
+
+
+#topbar table {
+    width: 100%;
+    height: 64px;
+
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+
+#topbar td {
+    vertical-align: middle;
+    text-align: center;
+
+    white-space: nowrap;
+
+    color: #aaa;
+
+    font-size: 15px;
+
+    padding: 0 6px;
+
+    overflow: hidden;
+}
+
+
+#topbar .caption {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: #777;
+
+    font-size: 10px;
+
+    font-weight: bold;
+}
+
+
+#topbar strong {
+    color: #fff;
+
+    font-size: 19px;
+
+    font-weight: bold;
+}
+
+
+#topbar .top-time {
+    width: 165px;
+}
+
+
+#topbar .top-time span {
+    color: #fff;
+
+    font-size: 26px;
+
+    font-weight: bold;
+}
+
+
+#topbar .top-weather {
+    width: 205px;
+
+    color: #ddd;
+
+    font-size: 16px;
+}
+
+
+#topbar .top-battery {
+    width: 190px;
+}
+
+
+#battery-state {
+    display: block;
+
+    margin-top: 2px;
+
+    color: #999;
+
+    font-size: 10px;
+}
+
+
+#camera-grid {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 66px;
+    bottom: 0;
+
+    background: #000;
+}
+
+
+#camera-grid table {
+    width: 100%;
+    height: 100%;
+
+    table-layout: fixed;
+    border-collapse: collapse;
+}
+
+
+#camera-grid td {
+    width: 50%;
+    height: 50%;
+
+    padding: 1px;
+
+    background: #000;
+
+    vertical-align: top;
+}
+
+
+.camera-box {
+    position: relative;
+
+    width: 100%;
+    height: 100%;
+
+    overflow: hidden;
+
+    background: #050505;
+}
+
+
+.camera-image {
+    display: block;
+
+    width: 100%;
+    height: 100%;
+
+    object-fit: cover;
+
+    background: #000;
+}
+
+
+.camera-label {
+    position: absolute;
+
+    left: 9px;
+    bottom: 7px;
+
+    padding: 4px 8px;
+
+    background: rgba(0, 0, 0, 0.68);
+
+    color: #fff;
+
+    font-size: 16px;
+
+    font-weight: bold;
+
+    border-radius: 2px;
+}
+
+
+.camera-status {
+    position: absolute;
+
+    right: 9px;
+    top: 7px;
+
+    padding: 3px 6px;
+
+    background: rgba(0, 0, 0, 0.68);
+
+    color: #bbb;
+
+    font-size: 10px;
+
+    font-weight: bold;
+
+    border-radius: 2px;
+}
+
+
+.camera-status.online {
+    color: #fff;
+}
+
+
+.camera-status.offline {
+    color: #bbb;
+}
+
+
+.camera-status.reserved {
+    color: #777;
+}
+
+
+.placeholder {
+    position: absolute;
+
+    left: 0;
+    right: 0;
+
+    top: 40%;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 25px;
+}
+
+
+.placeholder small {
+    display: block;
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-size: 13px;
+}

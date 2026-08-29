@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>Camera Dashboard</title>
+
+    <link rel="stylesheet" href="/static/dashboard.css">
+</head>
+
+<body>
+
+<div id="topbar">
+    <table>
+        <tr>
+            <td class="top-time">
+                <span id="clock">--:--</span>
+            </td>
+
+            <td class="top-weather">
+                <span id="weather">Weather --</span>
+            </td>
+
+            <td>
+                <span class="caption">PV</span>
+                <strong id="solar">--</strong>
+            </td>
+
+            <td>
+                <span class="caption">LOAD</span>
+                <strong id="load">--</strong>
+            </td>
+
+            <td class="top-battery">
+                <span class="caption">BAT</span>
+                <strong id="battery">--%</strong>
+                <span id="battery-state">--</span>
+            </td>
+
+            <td>
+                <span class="caption">TODAY</span>
+                <strong id="today-pv">--</strong>
+            </td>
+        </tr>
+    </table>
+</div>
+
+
+<div id="camera-grid">
+    <table>
+        <tr>
+            {% for camera in cameras[:2] %}
+            <td>
+                <div class="camera-box" id="box-{{ camera.key }}">
+
+                    {% if camera.configured %}
+                    <img
+                        class="camera-image"
+                        id="image-{{ camera.key }}"
+                        src="/camera/{{ camera.key }}.mjpeg"
+                        data-base-src="/camera/{{ camera.key }}.mjpeg"
+                        onerror="restartCamera(this)"
+                        alt="{{ camera.name }}">
+                    {% else %}
+                    <div class="placeholder">
+                        <div>{{ camera.name }}</div>
+                        <small>Not configured</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="camera-label">{{ camera.name }}</div>
+
+                    <div
+                        class="camera-status"
+                        id="status-{{ camera.key }}">
+                        {% if camera.configured %}CONNECTING{% else %}RESERVED{% endif %}
+                    </div>
+                </div>
+            </td>
+            {% endfor %}
+        </tr>
+
+        <tr>
+            {% for camera in cameras[2:] %}
+            <td>
+                <div class="camera-box" id="box-{{ camera.key }}">
+
+                    {% if camera.configured %}
+                    <img
+                        class="camera-image"
+                        id="image-{{ camera.key }}"
+                        src="/camera/{{ camera.key }}.mjpeg"
+                        data-base-src="/camera/{{ camera.key }}.mjpeg"
+                        onerror="restartCamera(this)"
+                        alt="{{ camera.name }}">
+                    {% else %}
+                    <div class="placeholder">
+                        <div>{{ camera.name }}</div>
+                        <small>Reserved</small>
+                    </div>
+                    {% endif %}
+
+                    <div class="camera-label">{{ camera.name }}</div>
+
+                    <div
+                        class="camera-status"
+                        id="status-{{ camera.key }}">
+                        {% if camera.configured %}CONNECTING{% else %}RESERVED{% endif %}
+                    </div>
+                </div>
+            </td>
+            {% endfor %}
+        </tr>
+    </table>
+</div>
+
+
+<script>
+function twoDigits(number) {
+    if (number < 10) {
+        return "0" + number;
+    }
+
+    return number;
+}
+
+
+function updateClock() {
+    var now = new Date();
+    var hours = now.getHours();
+    var minutes = now.getMinutes();
+    var suffix = "AM";
+
+    if (hours >= 12) {
+        suffix = "PM";
+    }
+
+    hours = hours % 12;
+
+    if (hours === 0) {
+        hours = 12;
+    }
+
+    document.getElementById("clock").innerHTML =
+        twoDigits(hours)
+        + ":"
+        + twoDigits(minutes)
+        + " "
+        + suffix;
+}
+
+
+function formatPower(value) {
+    value = Number(value || 0);
+
+    if (Math.abs(value) >= 1000) {
+        return (value / 1000).toFixed(1) + " kW";
+    }
+
+    return Math.round(value) + " W";
+}
+
+
+function setCameraStatus(key, status) {
+    var element = document.getElementById("status-" + key);
+
+    if (!element) {
+        return;
+    }
+
+    if (!status.configured) {
+        element.className = "camera-status reserved";
+        element.innerHTML = "RESERVED";
+        return;
+    }
+
+    if (status.online) {
+        element.className = "camera-status online";
+        element.innerHTML = "LIVE";
+    } else {
+        element.className = "camera-status offline";
+        element.innerHTML = "OFFLINE";
+    }
+}
+
+
+function updateStatus() {
+    var xhr = new XMLHttpRequest();
+
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState !== 4 || xhr.status !== 200) {
+            return;
+        }
+
+        try {
+            var data = JSON.parse(xhr.responseText);
+            var solar = data.solar;
+            var weather = data.weather;
+
+            if (solar && solar.available) {
+                document.getElementById("solar").innerHTML =
+                    formatPower(solar.pv_w);
+
+                document.getElementById("load").innerHTML =
+                    formatPower(solar.load_w);
+
+                document.getElementById("battery").innerHTML =
+                    Math.round(solar.battery_pct) + "%";
+
+                var state = String(solar.battery_state || "--").toUpperCase();
+
+                if (solar.battery_power_w > 0) {
+                    if (state === "CHARGING") {
+                        state = "CHG " + formatPower(solar.battery_power_w);
+                    } else if (state === "DISCHARGING") {
+                        state = "DIS " + formatPower(solar.battery_power_w);
+                    } else {
+                        state += " " + formatPower(solar.battery_power_w);
+                    }
+                }
+
+                document.getElementById("battery-state").innerHTML = state;
+
+                document.getElementById("today-pv").innerHTML =
+                    Number(solar.today_pv_kwh || 0).toFixed(1) + " kWh";
+            } else {
+                document.getElementById("solar").innerHTML = "--";
+                document.getElementById("load").innerHTML = "--";
+                document.getElementById("battery").innerHTML = "--%";
+                document.getElementById("battery-state").innerHTML = "SOLAR OFFLINE";
+                document.getElementById("today-pv").innerHTML = "--";
+            }
+
+            if (weather && weather.configured && weather.available) {
+                document.getElementById("weather").innerHTML =
+                    Math.round(weather.temperature_c)
+                    + " C "
+                    + weather.description;
+            } else if (weather && weather.configured) {
+                document.getElementById("weather").innerHTML =
+                    "Weather offline";
+            } else {
+                document.getElementById("weather").innerHTML =
+                    "";
+            }
+
+            if (data.cameras) {
+                var key;
+
+                for (key in data.cameras) {
+                    if (data.cameras.hasOwnProperty(key)) {
+                        setCameraStatus(key, data.cameras[key]);
+                    }
+                }
+            }
+        } catch (error) {
+        }
+    };
+
+    xhr.open(
+        "GET",
+        "/api/status?t=" + new Date().getTime(),
+        true
+    );
+
+    xhr.send();
+}
+
+
+function restartCamera(image) {
+    var base = image.getAttribute("data-base-src");
+
+    if (!base) {
+        return;
+    }
+
+    window.setTimeout(
+        function() {
+            image.src =
+                base
+                + "?reconnect="
+                + new Date().getTime();
+        },
+        3000
+    );
+}
+
+
+updateClock();
+updateStatus();
+
+window.setInterval(updateClock, 1000);
+window.setInterval(updateStatus, 3000);
+</script>
+
+</body>
+</html>
