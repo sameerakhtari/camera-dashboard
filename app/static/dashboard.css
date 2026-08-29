@@ -18,18 +18,29 @@ body {
 }
 
 
+/* =========================================================
+   TOP STATUS BAR
+   ========================================================= */
+
 #topbar {
     position: absolute;
-
     left: 0;
     right: 0;
     top: 0;
 
-    height: 64px;
+    height: 72px;
 
-    background: #151515;
+    background:
+        linear-gradient(
+            180deg,
+            #171a1f 0%,
+            #101216 100%
+        );
 
-    border-bottom: 2px solid #333;
+    border-bottom: 1px solid #30353c;
+
+    box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.55);
 
     z-index: 10;
 }
@@ -37,89 +48,177 @@ body {
 
 #topbar table {
     width: 100%;
-    height: 64px;
+    height: 72px;
 
     table-layout: fixed;
-    border-collapse: collapse;
+    border-collapse: separate;
+    border-spacing: 6px 5px;
 }
 
 
 #topbar td {
+    position: relative;
+
     vertical-align: middle;
     text-align: center;
 
     white-space: nowrap;
-
-    color: #aaa;
-
-    font-size: 15px;
-
-    padding: 0 6px;
-
     overflow: hidden;
+
+    padding: 5px 8px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #20242a 0%,
+            #181b20 100%
+        );
+
+    border: 1px solid #2c3239;
+
+    border-radius: 7px;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.035),
+        0 1px 3px rgba(0, 0, 0, 0.35);
+
+    color: #89919a;
+
+    font-size: 13px;
 }
 
 
+/* Small labels: PV / LOAD / BAT / TODAY */
 #topbar .caption {
     display: block;
 
     margin-bottom: 2px;
 
-    color: #777;
+    color: #737c86;
 
-    font-size: 10px;
+    font-size: 9px;
 
     font-weight: bold;
+
+    letter-spacing: 1.2px;
+
+    text-transform: uppercase;
 }
 
 
+/* Main values */
 #topbar strong {
-    color: #fff;
+    display: block;
 
-    font-size: 19px;
+    color: #f5f7fa;
+
+    font-size: 20px;
 
     font-weight: bold;
+
+    line-height: 22px;
+
+    text-shadow:
+        0 1px 2px rgba(0, 0, 0, 0.7);
 }
 
 
+/* Clock */
 #topbar .top-time {
-    width: 165px;
+    width: 170px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #252a31 0%,
+            #16191e 100%
+        );
+
+    border-color: #353c45;
 }
 
 
 #topbar .top-time span {
-    color: #fff;
+    color: #ffffff;
 
-    font-size: 26px;
+    font-size: 25px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.8px;
+
+    text-shadow:
+        0 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+
+/* Weather */
+#topbar .top-weather {
+    width: 190px;
+
+    color: #e2e6ea;
+
+    font-size: 15px;
 
     font-weight: bold;
 }
 
 
-#topbar .top-weather {
-    width: 205px;
-
-    color: #ddd;
-
-    font-size: 16px;
-}
-
-
+/* Battery */
 #topbar .top-battery {
     width: 190px;
 }
 
 
-#battery-state {
-    display: block;
-
-    margin-top: 2px;
-
-    color: #999;
-
-    font-size: 10px;
+#battery {
+    font-size: 21px;
 }
 
+
+#battery-state {
+    display: inline-block;
+
+    margin-top: 3px;
+
+    padding: 2px 7px;
+
+    background: #292e35;
+
+    border: 1px solid #343a42;
+
+    border-radius: 10px;
+
+    color: #aeb5bd;
+
+    font-size: 9px;
+
+    font-weight: bold;
+
+    letter-spacing: 0.4px;
+}
+
+
+/* Subtle accent line on each card */
+#topbar td:before {
+    content: "";
+
+    position: absolute;
+
+    left: 10px;
+    right: 10px;
+    top: 0;
+
+    height: 2px;
+
+    background: rgba(255, 255, 255, 0.08);
+
+    border-radius: 2px;
+}
+
+
+/* =========================================================
+   CAMERA GRID
+   ========================================================= */
 
 #camera-grid {
     position: absolute;
@@ -127,7 +226,7 @@ body {
     left: 0;
     right: 0;
 
-    top: 66px;
+    top: 73px;
     bottom: 0;
 
     background: #000;
