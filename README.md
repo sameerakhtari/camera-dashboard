@@ -8,7 +8,7 @@ It provides:
 
 - up to four Hikvision RTSP camera tiles;
 - server-side H.264 -> MJPEG compatibility conversion using FFmpeg;
-- LuxBridge solar telemetry from its REST endpoint;
+- solar telemetry from a local REST endpoint;
 - optional current weather using Open-Meteo;
 - a local clock;
 - a simple kiosk-friendly HTML page;
@@ -25,7 +25,7 @@ Hikvision camera H.264 sub-stream ----> Frigate / go2rtc (unchanged)
                                    +--> Camera Dashboard
                                          |
                                          +-- FFmpeg -> 640x360 MJPEG
-                                         +-- LuxBridge REST
+                                         +-- Solar REST
                                          +-- Weather cache
                                          |
                                          +--> old Android kiosk browser
@@ -71,7 +71,7 @@ Requirements:
 - Docker Engine
 - Docker Compose plugin
 - network access from the Docker host to the cameras
-- optional LuxBridge REST endpoint
+- optional local solar REST endpoint
 - optional internet access for weather
 
 Clone the repository:
@@ -142,7 +142,7 @@ DASHBOARD_PORT=8085
 TZ=Asia/Karachi
 ~~~
 
-### LuxBridge solar
+### Solar
 
 Default:
 
@@ -151,9 +151,9 @@ SOLAR_URL=http://host.docker.internal:8099/api/v1/live
 SOLAR_INTERVAL=3
 ~~~
 
-docker-compose.yml maps host.docker.internal to Docker's host-gateway on Linux, so a LuxBridge container/service published on the Docker host at port 8099 can be reached without putting this project on the same Docker network.
+docker-compose.yml maps host.docker.internal to Docker's host-gateway on Linux, so a local solar data service published on the Docker host at port 8099 can be reached without putting this project on the same Docker network.
 
-The dashboard currently uses these LuxBridge fields:
+The dashboard currently uses these solar telemetry fields:
 
 ~~~text
 telemetry.pv_power_w
@@ -210,7 +210,7 @@ WEATHER_INTERVAL=600
 
 The backend retrieves current conditions from Open-Meteo and caches them. The old Android box never talks directly to the weather service.
 
-If the weather API or internet fails, camera feeds, LuxBridge data, and the clock continue independently.
+If the weather API or internet fails, camera feeds, solar data, and the clock continue independently.
 
 ## Useful endpoints
 
@@ -260,7 +260,7 @@ Check the app:
 curl http://127.0.0.1:8085/health
 ~~~
 
-Check LuxBridge/dashboard state:
+Check solar/dashboard state:
 
 ~~~bash
 curl -s http://127.0.0.1:8085/api/status | python3 -m json.tool
@@ -422,7 +422,7 @@ ffplay -rtsp_transport tcp \
 
 If the password contains special URL characters, using CAMx_HOST/CAMx_USER/CAMx_PASS in .env is easier than constructing the RTSP URL manually.
 
-### LuxBridge is offline in the dashboard
+### Solar data is offline in the dashboard
 
 From the Docker host:
 
